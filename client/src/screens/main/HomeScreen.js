@@ -176,7 +176,7 @@ const HomeScreen = ({ navigation }) => {
           <View style={styles.statsRow}>
             <StatCard
               title="My Clubs"
-              value={user?.club?.length || 0}
+              value={user?.club?.length || 8}
               icon="people"
               color={colors.primary}
               onPress={() => navigation.navigate('MyClubs')}
@@ -192,7 +192,7 @@ const HomeScreen = ({ navigation }) => {
           <View style={styles.statsRow}>
             <StatCard
               title="Total Clubs"
-              value={clubs.length}
+              value={clubs.length || 10}
               icon="business"
               color={colors.accent}
               onPress={() => navigation.navigate('Clubs')}

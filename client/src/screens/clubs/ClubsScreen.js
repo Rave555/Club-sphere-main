@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,25 +8,21 @@ import {
   SafeAreaView,
   RefreshControl,
   Alert,
-} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
-import * as Animatable from 'react-native-animatable';
-import Toast from 'react-native-toast-message';
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
+import * as Animatable from "react-native-animatable";
+import Toast from "react-native-toast-message";
 
-import useClubStore from '../../stores/clubStore';
-import useAuthStore from '../../stores/authStore';
-import { colors, spacing, typography } from '../../utils/theme';
+import useClubStore from "../../stores/clubStore";
+import useAuthStore from "../../stores/authStore";
+import { colors, spacing, typography } from "../../utils/theme";
 
 const ClubCard = ({ club, onPress, onJoin, isJoined }) => (
-  <Animatable.View 
-    animation="fadeInUp" 
-    duration={600}
-    style={styles.clubCard}
-  >
+  <Animatable.View animation="fadeInUp" duration={600} style={styles.clubCard}>
     <TouchableOpacity onPress={() => onPress(club)} style={styles.cardContent}>
       <LinearGradient
-        colors={[colors.primary + '15', colors.secondary + '10']}
+        colors={[colors.primary + "15", colors.secondary + "10"]}
         style={styles.cardGradient}
       >
         <View style={styles.cardHeader}>
@@ -35,31 +31,40 @@ const ClubCard = ({ club, onPress, onJoin, isJoined }) => (
           </View>
           <View style={styles.clubInfo}>
             <Text style={styles.clubName} numberOfLines={1}>
-              {club.clubName || 'Club Name'}
+              {club.clubName || "Club Name"}
             </Text>
             <Text style={styles.clubDescription} numberOfLines={2}>
-              {club.clubDescription || 'No description available'}
+              {club.clubDescription || "No description available"}
             </Text>
           </View>
         </View>
-        
+
         <View style={styles.cardFooter}>
           <View style={styles.clubStats}>
             <View style={styles.statItem}>
-              <Ionicons name="people-outline" size={16} color={colors.textSecondary} />
+              <Ionicons
+                name="people-outline"
+                size={16}
+                color={colors.textSecondary}
+              />
               <Text style={styles.statText}>
                 {club.members?.length || 0} members
               </Text>
             </View>
           </View>
-          
+
           <TouchableOpacity
             style={[styles.joinButton, isJoined && styles.joinedButton]}
             onPress={() => onJoin(club)}
             disabled={isJoined}
           >
-            <Text style={[styles.joinButtonText, isJoined && styles.joinedButtonText]}>
-              {isJoined ? 'Joined' : 'Join'}
+            <Text
+              style={[
+                styles.joinButtonText,
+                isJoined && styles.joinedButtonText,
+              ]}
+            >
+              {isJoined ? "Joined" : "Join"}
             </Text>
           </TouchableOpacity>
         </View>
@@ -70,27 +75,34 @@ const ClubCard = ({ club, onPress, onJoin, isJoined }) => (
 
 const ClubsScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
-  const { clubs, loading, getAllClubs, requestMembership, membershipRequests } = useClubStore();
+  const { clubs, loading, getAllClubs, requestMembership, membershipRequests } =
+    useClubStore();
   const { token, user } = useAuthStore();
 
   useEffect(() => {
-    console.log('ClubsScreen - Token:', token ? 'Token exists' : 'No token');
-    console.log('ClubsScreen - User:', user ? 'User exists' : 'No user');
+    console.log("ClubsScreen - Token:", token ? "Token exists" : "No token");
+    console.log("ClubsScreen - User:", user ? "User exists" : "No user");
     if (token) {
       fetchClubs();
     }
   }, [token]);
 
   const fetchClubs = async () => {
-    console.log('fetchClubs - Token length:', token ? token.length : 'No token');
-    console.log('fetchClubs - Token starts with:', token ? token.substring(0, 20) + '...' : 'No token');
+    console.log(
+      "fetchClubs - Token length:",
+      token ? token.length : "No token"
+    );
+    console.log(
+      "fetchClubs - Token starts with:",
+      token ? token.substring(0, 20) + "..." : "No token"
+    );
     const result = await getAllClubs(token);
     if (!result.success) {
-      console.log('fetchClubs - Error:', result.error);
+      console.log("fetchClubs - Error:", result.error);
       Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: result.error || 'Failed to fetch clubs',
+        type: "error",
+        text1: "Error",
+        text2: result.error || "Failed to fetch clubs",
       });
     }
   };
@@ -102,32 +114,28 @@ const ClubsScreen = ({ navigation }) => {
   };
 
   const handleJoinClub = async (club) => {
-    Alert.alert(
-      'Join Club',
-      `Do you want to request to join ${club.name}?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Request',
-          onPress: async () => {
-            const result = await requestMembership(club._id, token);
-            if (result.success) {
-              Toast.show({
-                type: 'success',
-                text1: 'Request Sent',
-                text2: 'Your membership request has been sent for approval.',
-              });
-            } else {
-              Toast.show({
-                type: 'error',
-                text1: 'Error',
-                text2: result.error || 'Failed to send request',
-              });
-            }
-          },
+    Alert.alert("Join Club", `Do you want to request to join ${club.name}?`, [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Request",
+        onPress: async () => {
+          const result = await requestMembership(club._id, token);
+          if (result.success) {
+            Toast.show({
+              type: "success",
+              text1: "Request Sent",
+              text2: "Your membership request has been sent for approval.",
+            });
+          } else {
+            Toast.show({
+              type: "error",
+              text1: "Error",
+              text2: result.error || "Failed to send request",
+            });
+          }
         },
-      ]
-    );
+      },
+    ]);
   };
 
   const isUserJoined = (club) => {
@@ -137,7 +145,7 @@ const ClubsScreen = ({ navigation }) => {
   const renderClub = ({ item, index }) => (
     <ClubCard
       club={item}
-      onPress={() => navigation.navigate('ClubDetails', { club: item })}
+      onPress={() => navigation.navigate("ClubDetails", { clubId: item._id })}
       onJoin={handleJoinClub}
       isJoined={isUserJoined(item)}
     />
@@ -151,10 +159,10 @@ const ClubsScreen = ({ navigation }) => {
       >
         <Text style={styles.headerTitle}>Discover Clubs</Text>
         <Text style={styles.headerSubtitle}>Find your community</Text>
-        
+
         <TouchableOpacity
           style={styles.createButton}
-          onPress={() => navigation.navigate('CreateClub')}
+          onPress={() => navigation.navigate("CreateClub")}
         >
           <Ionicons name="add" size={24} color={colors.background} />
           <Text style={styles.createButtonText}>Create Club</Text>
@@ -170,7 +178,7 @@ const ClubsScreen = ({ navigation }) => {
       <Text style={styles.emptyText}>Be the first to create a club!</Text>
       <TouchableOpacity
         style={styles.emptyButton}
-        onPress={() => navigation.navigate('CreateClub')}
+        onPress={() => navigation.navigate("CreateClub")}
       >
         <Text style={styles.emptyButtonText}>Create Club</Text>
       </TouchableOpacity>
@@ -187,7 +195,7 @@ const ClubsScreen = ({ navigation }) => {
         ListEmptyComponent={!loading ? renderEmpty : null}
         contentContainerStyle={[
           styles.listContainer,
-          clubs.length === 0 && styles.emptyListContainer
+          clubs.length === 0 && styles.emptyListContainer,
         ]}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
@@ -231,18 +239,18 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   createButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: colors.background,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderRadius: 20,
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
   },
   createButtonText: {
     ...typography.body,
     color: colors.primary,
-    fontWeight: '600',
+    fontWeight: "600",
     marginLeft: spacing.xs,
   },
   clubCard: {
@@ -251,7 +259,7 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     borderRadius: 16,
-    overflow: 'hidden',
+    overflow: "hidden",
     shadowColor: colors.shadow,
     shadowOffset: {
       width: 0,
@@ -266,17 +274,17 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     marginBottom: spacing.md,
   },
   clubIcon: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: colors.primary + '15',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: colors.primary + "15",
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: spacing.md,
   },
   clubInfo: {
@@ -292,16 +300,16 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   cardFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   clubStats: {
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   statItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginRight: spacing.md,
   },
   statText: {
@@ -321,15 +329,15 @@ const styles = StyleSheet.create({
   joinButtonText: {
     ...typography.caption,
     color: colors.background,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   joinedButtonText: {
     color: colors.background,
   },
   emptyContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: spacing.xl,
   },
   emptyTitle: {
@@ -341,7 +349,7 @@ const styles = StyleSheet.create({
   emptyText: {
     ...typography.body,
     color: colors.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: spacing.lg,
   },
   emptyButton: {
@@ -353,7 +361,7 @@ const styles = StyleSheet.create({
   emptyButtonText: {
     ...typography.body,
     color: colors.background,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });
 

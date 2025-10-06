@@ -33,6 +33,6 @@ const userSchema = new mongoose.Schema({
         ref : "Club"
         }   
     ]
-})
+}) 
 
 module.exports = mongoose.model("User" , userSchema)

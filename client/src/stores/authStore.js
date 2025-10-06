@@ -1,6 +1,6 @@
-import { create } from 'zustand';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getApiUrl } from '../../config';
+import { create } from "zustand";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getApiUrl } from "../../config";
 
 const useAuthStore = create((set, get) => ({
   user: null,
@@ -13,9 +13,9 @@ const useAuthStore = create((set, get) => ({
   initializeAuth: async () => {
     try {
       set({ loading: true });
-      const token = await AsyncStorage.getItem('token');
-      const userData = await AsyncStorage.getItem('user');
-      
+      const token = await AsyncStorage.getItem("token");
+      const userData = await AsyncStorage.getItem("user");
+
       if (token && userData) {
         set({
           token,
@@ -27,7 +27,7 @@ const useAuthStore = create((set, get) => ({
         set({ loading: false });
       }
     } catch (error) {
-      console.error('Error initializing auth:', error);
+      console.error("Error initializing auth:", error);
       set({ loading: false });
     }
   },
@@ -35,51 +35,57 @@ const useAuthStore = create((set, get) => ({
   // Login
   login: async (email, password) => {
     try {
-      console.log('🔄 Starting login process...');
-      console.log('📧 Email:', email);
+      console.log("🔄 Starting login process...");
+      console.log("📧 Email:", email);
       const apiUrl = `${getApiUrl()}/auth/login`;
-      console.log('🌐 API URL:', apiUrl);
-      
+      console.log("🌐 API URL:", apiUrl);
+
       set({ loading: true, error: null });
-      
+
       const requestBody = JSON.stringify({ email, password });
-      console.log('📦 Request body:', requestBody);
-      
+      console.log("📦 Request body:", requestBody);
+
       const response = await fetch(apiUrl, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: requestBody,
       });
 
-      console.log('📡 Response status:', response.status);
-      console.log('📡 Response headers:', response.headers);
+      console.log("📡 Response status:", response.status);
+      console.log("📡 Response headers:", response.headers);
 
       const data = await response.json();
-      console.log('📄 Response data:', data);
+      console.log("📄 Response data:", data);
 
       if (response.ok) {
-        console.log('✅ Login successful!');
-        console.log('👤 User data:', data.user);
-        
+        console.log("✅ Login successful!");
+        console.log("👤 User data:", data.user);
+
         // Validate that we have both token and user
         if (!data.token) {
-          console.log('❌ Missing token in response');
-          set({ loading: false, error: 'Invalid server response - missing token' });
-          return { success: false, error: 'Invalid server response' };
+          console.log("❌ Missing token in response");
+          set({
+            loading: false,
+            error: "Invalid server response - missing token",
+          });
+          return { success: false, error: "Invalid server response" };
         }
-        
+
         if (!data.user) {
-          console.log('❌ Missing user data in response');
-          set({ loading: false, error: 'Invalid server response - missing user data' });
-          return { success: false, error: 'Invalid server response' };
+          console.log("❌ Missing user data in response");
+          set({
+            loading: false,
+            error: "Invalid server response - missing user data",
+          });
+          return { success: false, error: "Invalid server response" };
         }
-        
+
         // Store in AsyncStorage
-        await AsyncStorage.setItem('token', data.token);
-        await AsyncStorage.setItem('user', JSON.stringify(data.user));
-        
+        await AsyncStorage.setItem("token", data.token);
+        await AsyncStorage.setItem("user", JSON.stringify(data.user));
+
         set({
           user: data.user,
           token: data.token,
@@ -89,19 +95,19 @@ const useAuthStore = create((set, get) => ({
         });
         return { success: true };
       } else {
-        console.log('❌ Login failed:', data.message);
-        set({ loading: false, error: data.message || 'Login failed' });
+        console.log("❌ Login failed:", data.message);
+        set({ loading: false, error: data.message || "Login failed" });
         return { success: false, error: data.message };
       }
     } catch (error) {
-      console.log('🚨 Network error caught:', error);
-      console.log('🚨 Error details:', {
+      console.log("🚨 Network error caught:", error);
+      console.log("🚨 Error details:", {
         name: error.name,
         message: error.message,
-        stack: error.stack
+        stack: error.stack,
       });
-      set({ loading: false, error: 'Network error' });
-      return { success: false, error: 'Network error' };
+      set({ loading: false, error: "Network error" });
+      return { success: false, error: "Network error" };
     }
   },
 
@@ -109,11 +115,11 @@ const useAuthStore = create((set, get) => ({
   register: async (userName, email, password, college) => {
     try {
       set({ loading: true, error: null });
-      
+
       const response = await fetch(`${getApiUrl()}/auth/signup`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ userName, email, password, college }),
       });
@@ -122,9 +128,9 @@ const useAuthStore = create((set, get) => ({
 
       if (response.ok) {
         // Store in AsyncStorage
-        await AsyncStorage.setItem('token', data.token);
-        await AsyncStorage.setItem('user', JSON.stringify(data.user));
-        
+        await AsyncStorage.setItem("token", data.token);
+        await AsyncStorage.setItem("user", JSON.stringify(data.user));
+
         set({
           user: data.user,
           token: data.token,
@@ -134,12 +140,12 @@ const useAuthStore = create((set, get) => ({
         });
         return { success: true };
       } else {
-        set({ loading: false, error: data.message || 'Registration failed' });
+        set({ loading: false, error: data.message || "Registration failed" });
         return { success: false, error: data.message };
       }
     } catch (error) {
-      set({ loading: false, error: 'Network error' });
-      return { success: false, error: 'Network error' };
+      set({ loading: false, error: "Network error" });
+      return { success: false, error: "Network error" };
     }
   },
 
@@ -147,20 +153,20 @@ const useAuthStore = create((set, get) => ({
   logout: async () => {
     try {
       const { token } = get();
-      
+
       if (token) {
         await fetch(`${getApiUrl()}/auth/logout`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
       }
-      
+
       // Clear storage
-      await AsyncStorage.removeItem('token');
-      await AsyncStorage.removeItem('user');
-      
+      await AsyncStorage.removeItem("token");
+      await AsyncStorage.removeItem("user");
+
       set({
         user: null,
         token: null,
@@ -169,7 +175,7 @@ const useAuthStore = create((set, get) => ({
         error: null,
       });
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
       // Clear state anyway
       set({
         user: null,
