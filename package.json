@@ -1,0 +1,25 @@
+{
+  "name": "clubsphere",
+  "version": "1.0.0",
+  "description": "College Club Management App - Full Stack",
+  "scripts": {
+    "setup": "node setup.js",
+    "install-all": "npm install && cd server && npm install && cd ../client && npm install",
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd server && npm start",
+    "client": "cd client && npm start",
+    "dev": "concurrently \"npm run server:dev\" \"npm run client\"",
+    "server:dev": "cd server && npm run dev",
+    "clean": "cd server && npm run clean && cd ../client && expo start -c"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": ["react-native", "expo", "node.js", "mongodb", "college", "clubs"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tanmay-Gosavi1/Club-sphere.git"
+  },
+  "author": "Tanmay Gosavi",
+  "license": "MIT"
+}
