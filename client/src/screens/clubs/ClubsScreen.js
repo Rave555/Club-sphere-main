@@ -78,7 +78,7 @@ const ClubsScreen = ({ navigation }) => {
   const { clubs, loading, getAllClubs, requestMembership, membershipRequests } =
     useClubStore();
   const { token, user } = useAuthStore();
-
+  const { myClubs } = useClubStore()
   useEffect(() => {
     console.log("ClubsScreen - Token:", token ? "Token exists" : "No token");
     console.log("ClubsScreen - User:", user ? "User exists" : "No user");
@@ -139,7 +139,7 @@ const ClubsScreen = ({ navigation }) => {
   };
 
   const isUserJoined = (club) => {
-    return user?.club?.includes(club._id) || false;
+    return myClubs.some(myClub => myClub._id === club._id);
   };
 
   const renderClub = ({ item, index }) => (
