@@ -10,7 +10,7 @@ const useClubStore = create((set, get) => ({
   loading: false,
   loadingMyClubs: false,
   error: null,
-
+  initialized: false,
   // Fetch user's joined clubs
   fetchMyClubs: async (token) => {
     try {
@@ -377,6 +377,25 @@ const useClubStore = create((set, get) => ({
     }
   },
 
+  initializeStore: async (token) => {
+    if (!token || get().initialized) return;
+    
+    try {
+      set({ loading: true, loadingMyClubs: true });
+      
+      // Fetch all data concurrently
+      await Promise.all([
+        get().getAllClubs(token),
+        get().fetchMyClubs(token),
+        get().getUserMembershipRequests(token)
+      ]);
+      
+      set({ initialized: true });
+    } catch (error) {
+      console.error('Failed to initialize store:', error);
+    }
+  },
+
   // Set selected club
   setSelectedClub: (club) => set({ selectedClub: club }),
 
@@ -393,6 +412,7 @@ const useClubStore = create((set, get) => ({
       selectedClub: null,
       loading: false,
       error: null,
+      initialized: false,
     }),
 }));
 

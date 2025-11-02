@@ -23,7 +23,7 @@ const ProfileScreen = ({ navigation }) => {
   const [editedName, setEditedName] = useState('');
   
   const { user, logout, updateUser } = useAuthStore();
-  const { reset: resetClubStore } = useClubStore();
+  const { myClubs, reset: resetClubStore } = useClubStore();
 
   const handleLogout = () => {
     Alert.alert(
@@ -193,15 +193,15 @@ const ProfileScreen = ({ navigation }) => {
         <Animatable.View animation="fadeIn" delay={300} style={styles.statsSection}>
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{user?.club?.length || 0}</Text>
+              <Text style={styles.statNumber}>{myClubs.length || 0}</Text>
               <Text style={styles.statLabel}>Clubs Joined</Text>
             </View>
             <View style={styles.statDivider} />
-            <View style={styles.statItem}>
+            {/* <View style={styles.statItem}>
               <Text style={styles.statNumber}>0</Text>
               <Text style={styles.statLabel}>Events Attended</Text>
             </View>
-            <View style={styles.statDivider} />
+            <View style={styles.statDivider} /> */}
             <View style={styles.statItem}>
               <Text style={styles.statNumber}>
                 {new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}

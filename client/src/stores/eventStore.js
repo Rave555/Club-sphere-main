@@ -5,6 +5,7 @@ const useEventStore = create((set, get) => ({
   events: [],
   loading: false,
   error: null,
+  initialized: false,
 
   // Get all events for a club 
   getAllEvents: async (token) => {
@@ -64,6 +65,23 @@ const useEventStore = create((set, get) => ({
     }
   },
 
+  // Initialize store
+  initializeStore: async (token) => {
+    if (!token || get().initialized) return;
+    
+    try {
+      set({ loading: true });
+      
+      await Promise.all([
+        get().getAllEvents(token)
+      ]);
+      
+      set({ initialized: true });
+    } catch (error) {
+      console.error('Failed to initialize event store:', error);
+    }
+  },
+
 
   // Clear error
   clearError: () => set({ error: null }),
@@ -73,6 +91,7 @@ const useEventStore = create((set, get) => ({
     events: [],
     loading: false,
     error: null,
+    initialized: false,
   }),
 }));
 

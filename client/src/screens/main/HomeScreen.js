@@ -63,19 +63,38 @@ const RecentActivityItem = ({ activity }) => (
 
 const HomeScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
-  const { user } = useAuthStore();
-  const { clubs, myClubs ,getAllClubs, token } = useClubStore();
-    const { events } = useEventStore();
+  const [isInitialized, setIsInitialized] = useState(false);
+  const { user   , token } = useAuthStore();
+  const { clubs, myClubs ,getAllClubs,initializeStore: initializeClubStore } = useClubStore();
+    const { events , initializeStore: initializeEventStore } = useEventStore();
   useEffect(() => {
-    if (token) {
+    if (token && !isInitialized) {
       fetchData();
+      initializeData();
     }
   }, [token]);
+
+  const initializeData = async () => {
+    try {
+      await Promise.all([
+        initializeClubStore(token),
+        initializeEventStore(token)
+      ]);
+      setIsInitialized(true);
+    } catch (error) {
+      console.error('Failed to initialize data:', error);
+    }
+  };
   
   const fetchData = async () => {
     await Promise.all([
       getAllClubs(token)
     ]);
+  };
+
+  const getStatValue = (value, loading) => {
+    if (loading || !isInitialized) return '...';
+    return value;
   };
 
   const handleRefresh = async () => {
@@ -174,14 +193,14 @@ const HomeScreen = ({ navigation }) => {
           <View style={styles.statsRow}>
             <StatCard
               title="My Clubs"
-              value={myClubs.length}
+              value={getStatValue(myClubs.length, !isInitialized)}
               icon="people"
               color={colors.primary}
               onPress={() => navigation.navigate('MyClubs')}
             />
             <StatCard
               title="Events"
-              value={events.length}
+              value={getStatValue(events.length, !isInitialized)}
               icon="calendar"
               color={colors.secondary}
               onPress={() => navigation.navigate('Events')}
@@ -190,7 +209,7 @@ const HomeScreen = ({ navigation }) => {
           <View style={styles.statsRow}>
             <StatCard
               title="Total Clubs"
-              value={clubs.length}
+              value={getStatValue(clubs.length, !isInitialized)}
               icon="business"
               color={colors.accent}
               onPress={() => navigation.navigate('Clubs')}
