@@ -22,6 +22,7 @@ import MyClubsScreen from "../screens/MyClubsScreen";
 import EventsScreen from "../screens/events/EventsScreen";
 import EventDetailsScreen from "../screens/events/EventDetailsScreen";
 import CreateEventScreen from "../screens/events/CreateEventScreen";
+import AboutScreen from "../screens/about/About.js"
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -199,6 +200,16 @@ const MainStack = () => {
       options={{
         headerShown: true,
         title: "Event Details",
+        headerStyle: { backgroundColor: colors.primary },
+        headerTintColor: "#fff",
+      }}
+    />
+    <Stack.Screen
+      name="About"
+      component={AboutScreen}
+      options={{
+        headerShown: true,
+        title: "About",
         headerStyle: { backgroundColor: colors.primary },
         headerTintColor: "#fff",
       }}

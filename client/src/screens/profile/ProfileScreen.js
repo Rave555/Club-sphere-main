@@ -76,13 +76,13 @@ const ProfileScreen = ({ navigation }) => {
     {
       icon: 'people-outline',
       title: 'My Clubs',
-      subtitle: `Member of ${user?.club?.length || 0} clubs`,
+      subtitle: `Member of ${myClubs.length || 0} clubs`,
       color: colors.secondary,
       onPress: () => navigation.navigate('MyClubs'),
     },
     {
       icon: 'calendar-outline',
-      title: 'My Events',
+      title: 'Catchup Events',
       subtitle: 'View your upcoming events',
       color: colors.accent,
       onPress: () => navigation.navigate('Events'),
@@ -101,16 +101,12 @@ const ProfileScreen = ({ navigation }) => {
       },
     },
     {
-      icon: 'help-circle-outline',
-      title: 'Help & Support',
-      subtitle: 'Get help and contact support',
+      icon: 'people',
+      title: 'Know the Developers',
+      subtitle: 'Meet the team behind ClubSphere',
       color: colors.warning,
       onPress: () => {
-        Toast.show({
-          type: 'info',
-          text1: 'Coming Soon',
-          text2: 'Help & Support feature will be available soon!',
-        });
+        navigation.navigate("About");
       },
     },
   ];
