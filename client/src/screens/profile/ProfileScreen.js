@@ -251,13 +251,7 @@ const ProfileScreen = ({ navigation }) => {
                 </Text>
                 <TouchableOpacity
                   style={styles.adminButton}
-                  onPress={() => {
-                    Toast.show({
-                      type: 'info',
-                      text1: 'Coming Soon',
-                      text2: 'Admin panel will be available soon!',
-                    });
-                  }}
+                  onPress={() => navigation.navigate("Admin")}
                 >
                   <Text style={styles.adminButtonText}>Open Admin Panel</Text>
                 </TouchableOpacity>
@@ -289,6 +283,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   header: {
+    paddingTop: spacing.xl,
     marginBottom: spacing.lg,
   },
   headerGradient: {

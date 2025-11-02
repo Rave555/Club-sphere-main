@@ -13,6 +13,8 @@ import { Ionicons } from "@expo/vector-icons";
 import useClubStore from "../stores/clubStore";
 import useAuthStore from "../stores/authStore";
 import { colors, spacing, typography } from "../utils/theme";
+import * as Animatable from "react-native-animatable";
+import { LinearGradient } from "expo-linear-gradient";
 
 const ClubItem = ({ club, onPress }) => (
   <TouchableOpacity style={styles.clubCard} onPress={onPress}>
@@ -75,6 +77,17 @@ const MyClubsScreen = () => {
 
   return (
     <View style={styles.container}>
+      <Animatable.View animation="fadeInDown" style={styles.header}>
+              <LinearGradient
+                colors={colors.gradient.primary}
+                style={styles.headerGradient}
+              >
+                <Text style={styles.title}>My Clubs</Text>
+                <Text style={styles.subtitle}>
+                  Explore your joined clubs and stay connected!
+                </Text>
+              </LinearGradient>
+            </Animatable.View>
       <FlatList
         data={myClubs}
         keyExtractor={(item) => item._id}
@@ -98,6 +111,28 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+  },
+  header: {
+    paddingTop: spacing.xl,
+    marginBottom: spacing.lg,
+  },
+  headerGradient: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.xl,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+  },
+  title: {
+    ...typography.h1,
+    color: colors.background,
+    textAlign: "center",
+    marginBottom: spacing.xs,
+  },
+  subtitle: {
+    ...typography.body,
+    color: colors.background + "CC",
+    textAlign: "center",
   },
   listContent: {
     padding: spacing.md,

@@ -164,7 +164,7 @@ const ClubsScreen = ({ navigation }) => {
           style={styles.createButton}
           onPress={() => navigation.navigate("CreateClub")}
         >
-          <Ionicons name="add" size={24} color={colors.background} />
+          <Ionicons name="add" size={24} color={colors.primary} />
           <Text style={styles.createButtonText}>Create Club</Text>
         </TouchableOpacity>
       </LinearGradient>

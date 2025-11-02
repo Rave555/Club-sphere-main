@@ -12,6 +12,7 @@ import {
 import useClubStore from "../../stores/clubStore";
 import useAuthStore from "../../stores/authStore";
 import Toast from "react-native-toast-message";
+import { colors } from "../../utils/theme";
 
 const MembershipRequestsScreen = () => {
   const {
@@ -140,10 +141,10 @@ const MembershipRequestsScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f0f2f5" },
+  container: { flex: 1, backgroundColor: colors.backround },
   centered: { flex: 1, justifyContent: "center", alignItems: "center" },
   list: { padding: 16 },
-  emptyText: { fontSize: 16, color: "#666" },
+  emptyText: { fontSize: 16, color: colors.textSecondary },
   requestCard: {
     backgroundColor: "white",
     padding: 16,

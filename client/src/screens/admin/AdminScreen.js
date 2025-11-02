@@ -281,6 +281,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   header: {
+    paddingTop: spacing.xl,
     marginBottom: spacing.lg,
   },
   headerGradient: {
