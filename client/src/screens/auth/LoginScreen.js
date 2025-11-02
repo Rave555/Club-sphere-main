@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     height: 56,
     borderWidth: 1,
-    borderColor: colors.outline,
+    borderColor: colors.border,
   },
   inputError: {
     borderColor: colors.error,

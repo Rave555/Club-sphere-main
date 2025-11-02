@@ -21,14 +21,14 @@ import useAuthStore from '../../stores/authStore';
 import { colors, spacing, typography } from '../../utils/theme';
 
 const CreateEventScreen = ({ route, navigation }) => {
-  const { clubId } = route.params;
+  // const { clubId } = route.params;
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     date: '',
     time: '',
     location: '',
-    capacity: '',
+    clubName: '',
   });
   const [errors, setErrors] = useState({});
 
@@ -52,14 +52,22 @@ const CreateEventScreen = ({ route, navigation }) => {
 
     if (!formData.date.trim()) {
       newErrors.date = 'Event date is required';
+    }else if(!/^\d{4}-\d{2}-\d{2}$/.test(formData.date.trim())) {
+      newErrors.date = 'Date must be in YYYY-MM-DD format';
     }
 
     if (!formData.time.trim()) {
       newErrors.time = 'Event time is required';
+    }else if(!/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(formData.time.trim())) {
+      newErrors.time = 'Time must be in HH:MM format';
     }
 
     if (!formData.location.trim()) {
       newErrors.location = 'Location is required';
+    }
+
+    if (!formData.clubName.trim()) {
+      newErrors.clubName = 'Club name is required';
     }
 
     setErrors(newErrors);
@@ -82,9 +90,7 @@ const CreateEventScreen = ({ route, navigation }) => {
             
             const eventData = {
               ...formData,
-              date: eventDateTime,
-              clubId,
-              capacity: formData.capacity ? parseInt(formData.capacity) : undefined,
+              date: eventDateTime
             };
 
             const result = await createEvent(eventData, token);
@@ -207,6 +213,22 @@ const CreateEventScreen = ({ route, navigation }) => {
               )}
             </View>
 
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Club Name</Text>
+              <View style={[styles.inputWrapper, styles.textAreaWrapper, errors.clubName && styles.inputError]}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter club name"
+                  placeholderTextColor={colors.textSecondary}
+                  value={formData.clubName}
+                  onChangeText={(text) => updateFormData('clubName', text)}
+                />
+              </View>
+              {errors.clubName && (
+                <Text style={styles.errorText}>{errors.clubName}</Text>
+              )}
+            </View>
+
             {/* Date and Time Row */}
             <View style={styles.rowContainer}>
               {/* Date */}
@@ -244,7 +266,7 @@ const CreateEventScreen = ({ route, navigation }) => {
                   />
                   <TextInput
                     style={styles.input}
-                    placeholder="HH:MM"
+                    placeholder="HH:MM(24-hour)"
                     placeholderTextColor={colors.textSecondary}
                     value={formData.time}
                     onChangeText={(text) => updateFormData('time', text)}
@@ -277,27 +299,6 @@ const CreateEventScreen = ({ route, navigation }) => {
               {errors.location && (
                 <Text style={styles.errorText}>{errors.location}</Text>
               )}
-            </View>
-
-            {/* Capacity (Optional) */}
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Capacity (Optional)</Text>
-              <View style={styles.inputWrapper}>
-                <Ionicons 
-                  name="people-outline" 
-                  size={20} 
-                  color={colors.textSecondary} 
-                  style={styles.inputIcon}
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Maximum attendees"
-                  placeholderTextColor={colors.textSecondary}
-                  value={formData.capacity}
-                  onChangeText={(text) => updateFormData('capacity', text)}
-                  keyboardType="numeric"
-                />
-              </View>
             </View>
 
             {/* Create Button */}
@@ -386,7 +387,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     minHeight: 56,
     borderWidth: 1,
-    borderColor: colors.outline,
+    borderColor: colors.border,
   },
   textAreaWrapper: {
     alignItems: 'flex-start',

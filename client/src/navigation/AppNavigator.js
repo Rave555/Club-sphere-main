@@ -19,6 +19,9 @@ import CreateClubScreen from "../screens/clubs/CreateClubScreen";
 import AdminScreen from "../screens/admin/AdminScreen";
 import ProfileScreen from "../screens/profile/ProfileScreen";
 import MyClubsScreen from "../screens/MyClubsScreen";
+import EventsScreen from "../screens/events/EventsScreen";
+import EventDetailsScreen from "../screens/events/EventDetailsScreen";
+import CreateEventScreen from "../screens/events/CreateEventScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -144,12 +147,15 @@ const MainTabs = () => {
   );
 };
 
-const MainStack = () => (
-  <Stack.Navigator screenOptions={{ headerShown: false }}>
-    <Stack.Screen name="MainTabs" component={MainTabs} />
-    <Stack.Screen
-      name="MyClubs"
-      component={MyClubsScreen}
+const MainStack = () => {
+  const { user } = useAuthStore();
+
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="MainTabs" component={MainTabs} />
+      <Stack.Screen
+        name="MyClubs"
+        component={MyClubsScreen}
       options={{
         headerShown: true,
         title: "My Clubs",
@@ -177,8 +183,39 @@ const MainStack = () => (
         headerTintColor: "#fff",
       }}
     />
+    <Stack.Screen
+      name="Events"
+      component={EventsScreen}
+      options={{
+        headerShown: true,
+        title: "Events",
+        headerStyle: { backgroundColor: colors.primary },
+        headerTintColor: "#fff",
+      }}
+    />
+    <Stack.Screen
+      name="EventDetails"
+      component={EventDetailsScreen}
+      options={{
+        headerShown: true,
+        title: "Event Details",
+        headerStyle: { backgroundColor: colors.primary },
+        headerTintColor: "#fff",
+      }}
+    />
+    {user?.role === "admin" && (<Stack.Screen
+      name="CreateEvent"
+      component={CreateEventScreen}
+      options={{
+        headerShown: true,
+        title: "Create Event",
+        headerStyle: { backgroundColor: colors.primary },
+        headerTintColor: "#fff",
+      }}
+    />)}
+
   </Stack.Navigator>
-);
+)};
 
 // Main App Navigator
 const AppNavigator = () => {

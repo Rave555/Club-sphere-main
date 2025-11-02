@@ -64,19 +64,17 @@ const RecentActivityItem = ({ activity }) => (
 const HomeScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const { user } = useAuthStore();
-  const { clubs, getAllClubs, token } = useClubStore();
-  const { events, getUserEvents } = useEventStore();
-
+  const { clubs, myClubs ,getAllClubs, token } = useClubStore();
+    const { events } = useEventStore();
   useEffect(() => {
     if (token) {
       fetchData();
     }
   }, [token]);
-
+  
   const fetchData = async () => {
     await Promise.all([
-      getAllClubs(token),
-      getUserEvents(token),
+      getAllClubs(token)
     ]);
   };
 
@@ -90,7 +88,7 @@ const HomeScreen = ({ navigation }) => {
   const recentActivities = [
     {
       id: 1,
-      title: 'You joined Tech Club',
+      title: 'You joined Coding Club',
       time: '2 hours ago',
       icon: 'people',
       color: colors.primary,
@@ -120,7 +118,7 @@ const HomeScreen = ({ navigation }) => {
       onPress: () => navigation.navigate('Clubs'),
     },
     {
-      title: 'My Events',
+      title: 'Catchup Events',
       subtitle: 'View your upcoming events and activities',
       icon: 'calendar',
       color: colors.secondary,
@@ -176,13 +174,13 @@ const HomeScreen = ({ navigation }) => {
           <View style={styles.statsRow}>
             <StatCard
               title="My Clubs"
-              value={user?.club?.length || 8}
+              value={myClubs.length}
               icon="people"
               color={colors.primary}
               onPress={() => navigation.navigate('MyClubs')}
             />
             <StatCard
-              title="My Events"
+              title="Events"
               value={events.length}
               icon="calendar"
               color={colors.secondary}
@@ -192,7 +190,7 @@ const HomeScreen = ({ navigation }) => {
           <View style={styles.statsRow}>
             <StatCard
               title="Total Clubs"
-              value={clubs.length || 10}
+              value={clubs.length}
               icon="business"
               color={colors.accent}
               onPress={() => navigation.navigate('Clubs')}
@@ -204,6 +202,20 @@ const HomeScreen = ({ navigation }) => {
               color={colors.success}
             />
           </View>
+          {
+            user?.role === 'admin' && (
+            <View style={styles.statsRow}>
+              <StatCard
+                title="for any club"
+                value={"Create Event"}
+                icon="add-circle"
+                color={colors.accent}
+                onPress={() => navigation.navigate('CreateEvent')}
+              />
+    
+            </View>
+            )
+          }
         </Animatable.View>
 
         {/* Quick Actions */}

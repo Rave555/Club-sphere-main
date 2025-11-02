@@ -21,8 +21,8 @@ import { colors, spacing, typography } from '../../utils/theme';
 const EventDetailsScreen = ({ route, navigation }) => {
   const { event } = route.params;
   const [isJoined, setIsJoined] = useState(false);
-  
-  const { joinEvent, loading } = useEventStore();
+
+  const { loading } = useEventStore();
   const { token, user } = useAuthStore();
 
   const getEventStatus = () => {
@@ -90,8 +90,8 @@ const EventDetailsScreen = ({ route, navigation }) => {
               </View>
               
               <View style={[styles.statusBadge, { backgroundColor: eventStatus.color + '20' }]}>
-                <View style={[styles.statusDot, { backgroundColor: eventStatus.color }]} />
-                <Text style={[styles.statusText, { color: eventStatus.color }]}>
+                <View style={[styles.statusDot, { backgroundColor: eventStatus.color  , color : colors.primaryContainer}]} />
+                <Text style={[styles.statusText, { color: colors.primaryContainer }]}>
                   {eventStatus.text}
                 </Text>
               </View>
@@ -139,23 +139,23 @@ const EventDetailsScreen = ({ route, navigation }) => {
             style={[
               styles.actionButton,
               styles.primaryAction,
-              isJoined && styles.joinedAction,
+              // isJoined && styles.joinedAction,
               eventStatus.status === 'past' && styles.disabledAction
             ]}
-            onPress={handleJoinEvent}
-            disabled={isJoined || eventStatus.status === 'past' || loading}
+            // onPress={handleJoinEvent}
+            disabled={eventStatus.status === 'past' || loading}
           >
             <LinearGradient
-              colors={isJoined ? [colors.success, colors.success] : colors.gradient.primary}
+              colors={colors.gradient.primary}
               style={styles.actionGradient}
             >
               <Ionicons 
-                name={isJoined ? "checkmark-circle" : "person-add"} 
-                size={20} 
+                name={"happy-outline"} 
+                size={24} 
                 color={colors.background} 
               />
               <Text style={styles.actionText}>
-                {isJoined ? 'Joined' : eventStatus.status === 'past' ? 'Event Ended' : 'Join Event'}
+                {eventStatus.status === 'past' ? 'Event Ended' : 'Be There!'}
               </Text>
             </LinearGradient>
           </TouchableOpacity>
@@ -172,12 +172,12 @@ const EventDetailsScreen = ({ route, navigation }) => {
           <Text style={styles.description}>{event.description}</Text>
         </Animatable.View>
 
-        {/* Attendees Section */}
+        {/* Guests Section */}
         <Animatable.View animation="fadeIn" delay={900} style={styles.attendeesContainer}>
           <View style={styles.attendeesHeader}>
-            <Text style={styles.sectionTitle}>Attendees</Text>
+            <Text style={styles.sectionTitle}>Guests</Text>
             <Text style={styles.attendeeCount}>
-              {event.attendees?.length || 0} going
+              {""} 
             </Text>
           </View>
           
@@ -200,8 +200,8 @@ const EventDetailsScreen = ({ route, navigation }) => {
           ) : (
             <View style={styles.noAttendees}>
               <Ionicons name="people-outline" size={32} color={colors.textSecondary} />
-              <Text style={styles.noAttendeesText}>No attendees yet</Text>
-              <Text style={styles.noAttendeesSubtext}>Be the first to join!</Text>
+              <Text style={styles.noAttendeesText}>Will be disclosed soon</Text>
+              <Text style={styles.noAttendeesSubtext}>Stay tuned!</Text>
             </View>
           )}
         </Animatable.View>
@@ -270,6 +270,8 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
     marginRight: spacing.xs,
+    color: colors.primaryContainer,
+    backgroundColor: colors.primaryContainer,
   },
   statusText: {
     ...typography.body,

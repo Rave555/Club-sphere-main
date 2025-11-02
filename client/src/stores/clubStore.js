@@ -96,7 +96,9 @@ const useClubStore = create((set, get) => ({
       const data = await response.json();
 
       if (response.ok) {
-        set({ loading: false });
+        // Update clubs
+        const { clubs } = get();
+        set({ clubs: [...clubs, data.club], loading: false });
         return { success: true, club: data.club };
       } else {
         set({ loading: false, error: data.message || "Failed to create club" });

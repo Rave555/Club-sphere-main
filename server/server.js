@@ -10,6 +10,7 @@ const connectDB = require('./config/db.js')
 const cloudinary = require('./config/cloudinary.js')
 const authRouter = require('./routes/authRoutes.js')
 const clubRoutes = require('./routes/clubRoutes.js')
+const eventRoutes = require('./routes/eventRoutes.js')
 const cloudinaryConnect = require('./config/cloudinary.js')
 
 //Middlewares
@@ -33,6 +34,7 @@ app.get('/' , (req,res)=>{
 })
 app.use('/api/auth' , authRouter)
 app.use('/api/clubs' , clubRoutes)
+app.use('/api/events' , eventRoutes)
 
 //Db connect
 connectDB()

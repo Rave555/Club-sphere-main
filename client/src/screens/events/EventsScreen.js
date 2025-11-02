@@ -69,9 +69,9 @@ const EventCard = ({ event, onPress }) => {
               </Text>
             </View>
             <View style={styles.attendeeContainer}>
-              <Ionicons name="people-outline" size={16} color={colors.textSecondary} />
+              <Ionicons name="business" size={16} color={colors.textSecondary} />
               <Text style={styles.attendeeText}>
-                {event.attendees?.length || 0}
+                {event.clubName}
               </Text>
             </View>
           </View>
@@ -85,7 +85,7 @@ const EventsScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [filterType, setFilterType] = useState('all'); // all, today, week, month
   
-  const { events, getUserEvents, loading } = useEventStore();
+  const { events, getAllEvents, loading } = useEventStore();
   const { token } = useAuthStore();
 
   useEffect(() => {
@@ -95,7 +95,7 @@ const EventsScreen = ({ navigation }) => {
   }, [token]);
 
   const fetchEvents = async () => {
-    await getUserEvents(token);
+    await getAllEvents(token);
   };
 
   const handleRefresh = async () => {

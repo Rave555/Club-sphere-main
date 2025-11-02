@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     minHeight: 56,
     borderWidth: 1,
-    borderColor: colors.outline,
+    borderColor: colors.border,
   },
   textAreaWrapper: {
     alignItems: 'flex-start',
@@ -382,7 +382,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginRight: spacing.sm,
     borderWidth: 1,
-    borderColor: colors.outline,
+    borderColor: colors.border,
   },
   selectedCategoryChip: {
     backgroundColor: colors.primary,
