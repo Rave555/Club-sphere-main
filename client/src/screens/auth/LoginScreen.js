@@ -37,8 +37,8 @@ const LoginScreen = ({ navigation }) => {
 
     if (!password.trim()) {
       newErrors.password = 'Password is required';
-    } else if (password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+    } else if (password.length < 3) {
+      newErrors.password = 'Password must be at least 3 characters';
     }
 
     setErrors(newErrors);

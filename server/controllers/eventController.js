@@ -30,7 +30,7 @@ const createEvent = async (req,res) =>{
 
 const getAllEvents = async (req,res) =>{
     try {
-        const events = await Event.find({}); 
+        const events = await Event.find({}).sort({ createdAt: -1 }); 
         return res.status(200).json({success:true , events : events})
     } catch (error) {
         console.log(error)

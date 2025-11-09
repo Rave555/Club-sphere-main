@@ -18,7 +18,7 @@ class ClubController extends BaseController {
       const { clubName, clubDescription } = req.body;
 
       // Can be array or single file
-      // const clubPhotos = req.files?.clubPhotos
+      const clubPhotos = req.files?.clubPhotos 
 
       if (!clubName || !clubDescription) {
         return res
@@ -26,20 +26,20 @@ class ClubController extends BaseController {
           .json({ success: false, message: "Incomplete credentials" });
       }
 
-      // let photoUrls = []
+      let photoUrls = []
 
-      // if(clubPhotos.length > 0){
-      //     const filesArray = Array.isArray(clubPhotos) ? clubPhotos : [clubPhotos]
-      //     for (const file of filesArray) {
-      //         const result = await uploadToCloudinary(file, "ClubSphere/clubs")
-      //         photoUrls.push(result.secure_url)
-      //     }
-      // }
+      if(clubPhotos.length > 0){
+          const filesArray = Array.isArray(clubPhotos) ? clubPhotos : [clubPhotos]
+          for (const file of filesArray) {
+              const result = await uploadToCloudinary(file, "ClubSphere/clubs")
+              photoUrls.push(result.secure_url)
+          }
+      }
 
       const club = await Club.create({
         clubName: clubName,
         clubDescription: clubDescription,
-        // clubPhotos: photoUrls,
+        clubPhotos: photoUrls,
         createdBy: req.user._id,
         isApproved: false, // Club needs admin approval
       });
