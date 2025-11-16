@@ -11,9 +11,19 @@ const clubSchema = new mongoose.Schema({
         required : true ,
         trim : true
     },
+    category : {
+        type : String ,
+        required : false ,
+        trim : true
+    },
+    location : {
+        type : String ,
+        required : false ,
+        trim : true
+    },
     clubPhotos : [{
         type : String ,
-        required : true
+        required : false
     }],
     clubAdmin : [{
         type : String ,

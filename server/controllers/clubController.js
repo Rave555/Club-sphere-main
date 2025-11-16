@@ -15,7 +15,7 @@ class BaseController {
 class ClubController extends BaseController {
   async createClub(req, res) {
     try {
-      const { clubName, clubDescription } = req.body;
+      const { clubName, clubDescription, category, location } = req.body;
 
       // Can be array or single file
       const clubPhotos = req.files?.clubPhotos 
@@ -28,7 +28,7 @@ class ClubController extends BaseController {
 
       let photoUrls = []
 
-      if(clubPhotos.length > 0){
+      if(clubPhotos && clubPhotos.length > 0){
           const filesArray = Array.isArray(clubPhotos) ? clubPhotos : [clubPhotos]
           for (const file of filesArray) {
               const result = await uploadToCloudinary(file, "ClubSphere/clubs")
@@ -39,6 +39,8 @@ class ClubController extends BaseController {
       const club = await Club.create({
         clubName: clubName,
         clubDescription: clubDescription,
+        category: category,
+        location: location,
         clubPhotos: photoUrls,
         createdBy: req.user._id,
         isApproved: false, // Club needs admin approval

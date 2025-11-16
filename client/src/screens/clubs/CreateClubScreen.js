@@ -169,6 +169,12 @@ const CreateClubScreen = ({ navigation }) => {
               colors={colors.gradient.primary}
               style={styles.headerGradient}
             >
+              <TouchableOpacity
+                style={styles.backButton}
+                onPress={() => navigation.goBack()}
+              >
+                <Ionicons name="arrow-back" size={24} color={colors.background} />
+              </TouchableOpacity>
               <Text style={styles.title}>Create New Club</Text>
               <Text style={styles.subtitle}>
                 Start building your community
@@ -307,6 +313,13 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xl,
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
+  },
+  backButton: {
+    position: 'absolute',
+    top: spacing.lg,
+    left: spacing.lg,
+    zIndex: 10,
+    padding: spacing.xs,
   },
   title: {
     ...typography.h1,
