@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { getApiUrl } from "../../config";
+import * as FileSystem from 'expo-file-system';
 
 const useClubStore = create((set, get) => ({
   clubs: [],
@@ -79,10 +80,75 @@ const useClubStore = create((set, get) => ({
     }
   },
 
+  // Get club by ID
+  getClubById: async (clubId, token) => {
+    try {
+      const { clubs, myClubs } = get();
+      
+      // First check if club exists in local state
+      let club = clubs.find(c => c._id === clubId);
+      if (!club) {
+        club = myClubs.find(c => c._id === clubId);
+      }
+      
+      if (club) {
+        return { success: true, club };
+      }
+
+      // If not found locally, fetch from API
+      const response = await fetch(`${getApiUrl()}/clubs/allClubs`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.clubs) {
+        const foundClub = data.clubs.find(c => c._id === clubId);
+        if (foundClub) {
+          return { success: true, club: foundClub };
+        }
+      }
+      
+      return { success: false, error: "Club not found" };
+    } catch (error) {
+      return { success: false, error: "Network error" };
+    }
+  },
+
   // Create a new club
   createClub: async (clubData, token) => {
     try {
       set({ loading: true, error: null });
+
+      let payload = {
+        clubName: clubData.clubName,
+        clubDescription: clubData.clubDescription,
+        ...(clubData.category ? { category: clubData.category } : {}),
+        ...(clubData.location ? { location: clubData.location } : {}),
+      };
+
+      // If images are provided, convert to base64 (reliable in Expo Go)
+      if (clubData.images && clubData.images.length > 0) {
+        const base64Array = await Promise.all(
+          clubData.images.map(async (img) => {
+            try {
+              const base64 = await FileSystem.readAsStringAsync(img.uri, {
+                encoding: FileSystem.EncodingType.Base64,
+              });
+              return base64; // send raw base64; server will prefix data URL
+            } catch (e) {
+              console.warn('Failed to read image as base64:', img.uri, e);
+              return null;
+            }
+          })
+        );
+        const filtered = base64Array.filter(Boolean);
+        if (filtered.length > 0) {
+          payload.clubPhotosBase64 = filtered;
+        }
+      }
 
       const response = await fetch(`${getApiUrl()}/clubs/createClub`, {
         method: "POST",
@@ -90,13 +156,12 @@ const useClubStore = create((set, get) => ({
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(clubData),
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        // Update clubs
         const { clubs } = get();
         set({ clubs: [...clubs, data.club], loading: false });
         return { success: true, club: data.club };
@@ -105,8 +170,8 @@ const useClubStore = create((set, get) => ({
         return { success: false, error: data.message };
       }
     } catch (error) {
-      set({ loading: false, error: "Network error" });
-      return { success: false, error: "Network error" };
+      set({ loading: false, error: error.message || "Network error" });
+      return { success: false, error: error.message || "Network error" };
     }
   },
 

@@ -10,11 +10,13 @@ import {
   Platform,
   ScrollView,
   Alert,
+  Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import * as Animatable from 'react-native-animatable';
 import Toast from 'react-native-toast-message';
+import * as ImagePicker from 'expo-image-picker';
 
 import useClubStore from '../../stores/clubStore';
 import useAuthStore from '../../stores/authStore';
@@ -28,6 +30,7 @@ const CreateClubScreen = ({ navigation }) => {
     location: '',
   });
   const [errors, setErrors] = useState({});
+  const [selectedImages, setSelectedImages] = useState([]);
 
   const { createClub, loading } = useClubStore();
   const { token } = useAuthStore();
@@ -86,7 +89,11 @@ const CreateClubScreen = ({ navigation }) => {
         {
           text: 'Create',
           onPress: async () => {
-            const result = await createClub(formData, token);
+            const clubDataWithImages = {
+              ...formData,
+              images: selectedImages,
+            };
+            const result = await createClub(clubDataWithImages, token);
             
             if (result.success) {
               Toast.show({
@@ -114,6 +121,82 @@ const CreateClubScreen = ({ navigation }) => {
       setErrors(prev => ({ ...prev, [field]: null }));
     }
   };
+
+  const pickImages = async () => {
+    if (selectedImages.length >= 5) {
+      Toast.show({
+        type: 'info',
+        text1: 'Maximum Limit Reached',
+        text2: 'You can upload maximum 5 images',
+      });
+      return;
+    }
+
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Toast.show({
+        type: 'error',
+        text1: 'Permission Denied',
+        text2: 'Please allow access to your photos',
+      });
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsMultipleSelection: true,
+      quality: 0.8,
+      selectionLimit: 5 - selectedImages.length,
+    });
+
+    if (!result.canceled && result.assets) {
+      const newImages = result.assets.map(asset => ({
+        uri: asset.uri,
+        type: asset.type || 'image/jpeg',
+        fileName: asset.fileName || `club_image_${Date.now()}.jpg`,
+      }));
+      setSelectedImages(prev => [...prev, ...newImages].slice(0, 5));
+    }
+  };
+
+  const removeImage = (index) => {
+    setSelectedImages(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const renderImagePicker = () => (
+    <View style={styles.imagePickerContainer}>
+      <Text style={styles.label}>Club Images (Max 5)</Text>
+      <ScrollView 
+        horizontal 
+        showsHorizontalScrollIndicator={false}
+        style={styles.imageScrollView}
+      >
+        {selectedImages.map((image, index) => (
+          <View key={index} style={styles.imagePreviewContainer}>
+            <Image source={{ uri: image.uri }} style={styles.imagePreview} />
+            <TouchableOpacity
+              style={styles.removeImageButton}
+              onPress={() => removeImage(index)}
+            >
+              <Ionicons name="close-circle" size={24} color={colors.error} />
+            </TouchableOpacity>
+          </View>
+        ))}
+        {selectedImages.length < 5 && (
+          <TouchableOpacity
+            style={styles.addImageButton}
+            onPress={pickImages}
+          >
+            <Ionicons name="add" size={32} color={colors.textSecondary} />
+            <Text style={styles.addImageText}>Add Image</Text>
+          </TouchableOpacity>
+        )}
+      </ScrollView>
+      <Text style={styles.imageHelperText}>
+        {selectedImages.length}/5 images selected
+      </Text>
+    </View>
+  );
 
   const renderCategorySelector = () => (
     <View style={styles.categoryContainer}>
@@ -233,6 +316,9 @@ const CreateClubScreen = ({ navigation }) => {
 
             {/* Category */}
             {renderCategorySelector()}
+
+            {/* Image Picker */}
+            {renderImagePicker()}
 
             {/* Location */}
             <View style={styles.inputContainer}>
@@ -442,6 +528,50 @@ const styles = StyleSheet.create({
     ...typography.caption,
     color: colors.textSecondary,
     flex: 1,
+    marginLeft: spacing.sm,
+  },
+  imagePickerContainer: {
+    marginBottom: spacing.lg,
+  },
+  imageScrollView: {
+    marginBottom: spacing.sm,
+  },
+  imagePreviewContainer: {
+    marginRight: spacing.md,
+    position: 'relative',
+  },
+  imagePreview: {
+    width: 120,
+    height: 120,
+    borderRadius: 12,
+    backgroundColor: colors.surfaceVariant,
+  },
+  removeImageButton: {
+    position: 'absolute',
+    top: -8,
+    right: -8,
+    backgroundColor: colors.background,
+    borderRadius: 12,
+  },
+  addImageButton: {
+    width: 120,
+    height: 120,
+    borderRadius: 12,
+    backgroundColor: colors.surfaceVariant,
+    borderWidth: 2,
+    borderStyle: 'dashed',
+    borderColor: colors.border,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  addImageText: {
+    ...typography.caption,
+    color: colors.textSecondary,
+    marginTop: spacing.xs,
+  },
+  imageHelperText: {
+    ...typography.caption,
+    color: colors.textSecondary,
     marginLeft: spacing.sm,
   },
 });

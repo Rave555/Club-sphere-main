@@ -1,11 +1,13 @@
 const cloudinary = require('cloudinary').v2
 
-const uploadToCloudinary = async (file, folder ,quality)=>{
-    const options = {folder}
+const uploadToCloudinary = async (file, folder, quality) => {
+    const options = { folder }
     options.resource_type = "auto"
-    if(quality){
+    if (quality) {
         options.quality = quality
     }
-    return await cloudinary.uploader.upload(file.tempFilePath , options)
+    // Support both file objects from express-fileupload and base64/data URLs
+    const uploadSource = typeof file === 'string' ? file : file?.tempFilePath
+    return await cloudinary.uploader.upload(uploadSource, options)
 }
 module.exports = uploadToCloudinary

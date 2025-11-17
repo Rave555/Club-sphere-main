@@ -17,8 +17,8 @@ class ClubController extends BaseController {
     try {
       const { clubName, clubDescription, category, location } = req.body;
 
-      // Can be array or single file
-      const clubPhotos = req.files?.clubPhotos 
+      // Can be array or single file via multipart
+      const clubPhotos = req.files?.clubPhotos;
 
       if (!clubName || !clubDescription) {
         return res
@@ -26,14 +26,49 @@ class ClubController extends BaseController {
           .json({ success: false, message: "Incomplete credentials" });
       }
 
-      let photoUrls = []
+      let photoUrls = [];
 
-      if(clubPhotos && clubPhotos.length > 0){
-          const filesArray = Array.isArray(clubPhotos) ? clubPhotos : [clubPhotos]
+      // Handle multipart form-data uploads
+      if (clubPhotos) {
+        try {
+          const filesArray = Array.isArray(clubPhotos) ? clubPhotos : [clubPhotos];
           for (const file of filesArray) {
-              const result = await uploadToCloudinary(file, "ClubSphere/clubs")
-              photoUrls.push(result.secure_url)
+            const result = await uploadToCloudinary(file, "ClubSphere/clubs");
+            photoUrls.push(result.secure_url);
           }
+        } catch (uploadError) {
+          return res
+            .status(500)
+            .json({ success: false, message: "Error uploading images: " + uploadError.message });
+        }
+      }
+
+      // Handle base64 uploads sent in JSON
+      if (!clubPhotos && req.body?.clubPhotosBase64) {
+        try {
+          let base64Array = [];
+          const input = req.body.clubPhotosBase64;
+          if (typeof input === 'string') {
+            try {
+              const parsed = JSON.parse(input);
+              base64Array = Array.isArray(parsed) ? parsed : [parsed];
+            } catch (_) {
+              base64Array = [input];
+            }
+          } else if (Array.isArray(input)) {
+            base64Array = input;
+          }
+
+          for (const b64 of base64Array) {
+            const dataUrl = b64.startsWith('data:') ? b64 : `data:image/jpeg;base64,${b64}`;
+            const result = await uploadToCloudinary(dataUrl, "ClubSphere/clubs");
+            photoUrls.push(result.secure_url);
+          }
+        } catch (uploadError) {
+          return res
+            .status(500)
+            .json({ success: false, message: "Error uploading base64 images: " + uploadError.message });
+        }
       }
 
       const club = await Club.create({
