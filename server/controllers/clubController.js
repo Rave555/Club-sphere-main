@@ -268,7 +268,7 @@ class ClubController extends BaseController {
   async rejectClub(req, res) {
     try {
       const { clubId } = req.params;
-      const { reason } = req.body;
+      // const { reason } = req.body;
 
       const club = await Club.findById(clubId);
       if (!club) {
